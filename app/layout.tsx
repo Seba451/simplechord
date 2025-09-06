@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { NotationProvider } from "./context/notation";
+import UserMenu from "./user/page";
+import { AuthProvider } from "./context/authContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,8 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className="bg-gradient-to-br from-green-50 via-white to-green-100 min-h-screen">
+        <NotationProvider>
+            
+            {children}
+            <UserMenu />
+         
+        </NotationProvider>
       </body>
     </html>
   );

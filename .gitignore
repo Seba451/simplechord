@@ -17,6 +17,14 @@
 /.next/
 /out/
 
+*/venv/
+venv/
+env/
+.venv/
+ENV/
+backend/venv/
+backend/env/
+
 # production
 /build
 
