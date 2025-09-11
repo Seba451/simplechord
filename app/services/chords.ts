@@ -1,5 +1,5 @@
 // utils/chords.ts
-const NOTE_TO_MIDI = {
+const NOTE_TO_MIDI: Record<string, number> = {
   C: 60, "C#": 61, D: 62, "D#": 63, E: 64, F: 53, "F#": 54,
   G: 55, "G#": 56, A: 57, "A#": 58, B: 59
 };

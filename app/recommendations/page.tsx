@@ -3,7 +3,7 @@
 import { exportProgressionToMidi } from '../services/midi';
 import { playChord, playProgression } from "../services/audio";
 import { chordToNotes } from "../services/chords";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {
@@ -29,6 +29,9 @@ import { convertirGradosAAcordes } from '../services/toChordConversion';
 import { getUserService } from '../services/auth';
 import ExplanationToggle from '@/components/ExplanationToggle';
 
+
+// Type guard to filter non-null strings
+const isString = (x: unknown): x is string => typeof x === 'string' && x.length > 0;
 
 const notasAmericano = [
   "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
@@ -83,8 +86,20 @@ function toAmericano(chord: string) {
   return chord;
 }
 
+type Notation = 'latino' | 'americano';
+type Mode = 'Mayor' | 'Menor';
+
+interface HeaderProps {
+  notation: Notation;
+  mode: Mode;
+  setMode: (m: Mode) => void;
+  tonality: string;
+  setTonality: (t: string) => void;
+  toggleNotation?: () => void;
+}
+
 // Header Component
-const Header = ({ notation, setNotation, mode, setMode, tonality, setTonality }) => {
+const Header = ({ notation, mode, setMode, tonality, setTonality }: HeaderProps) => {
   const notas = notation === 'latino' ? notasLatino : notasAmericano;
   return (
     <div className="flex justify-start gap-[80px] mb-8">
@@ -93,7 +108,7 @@ const Header = ({ notation, setNotation, mode, setMode, tonality, setTonality })
         <div className="relative">
           <select
             value={mode}
-            onChange={e => setMode(e.target.value)}
+            onChange={e => setMode(e.target.value as Mode)}
             className="appearance-none flex items-center justify-between w-[230px] px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-900"
           >
             <option value="Mayor">Mayor</option>
@@ -121,9 +136,20 @@ const Header = ({ notation, setNotation, mode, setMode, tonality, setTonality })
   )
 }
 
+interface ChordProgressionProps {
+  chords: (string | null)[];
+  activeChord: number;
+  setActiveChord: (n: number) => void;
+  onDeleteChord: (newChords: (string | null)[], newActiveChord: number) => void;
+  notation: Notation;
+  onSelectChord: (index: number) => void;
+  fetchRecommendations: (index: number) => void;
+  playingChordIndex?: number | null;
+}
+
 // ChordProgression Component
-const ChordProgression = ({ chords, activeChord, setActiveChord, onDeleteChord, notation, onSelectChord, fetchRecommendations, playingChordIndex}) => {
-  const handleDeleteChord = (indexToDelete) => {
+const ChordProgression = ({ chords, activeChord, setActiveChord, onDeleteChord, notation, onSelectChord, fetchRecommendations, playingChordIndex}: ChordProgressionProps) => {
+  const handleDeleteChord = (indexToDelete: number) => {
     const newChords = chords.filter((_, index) => index !== indexToDelete);
     
     let newActiveChord = activeChord;
@@ -204,7 +230,15 @@ const ChordProgression = ({ chords, activeChord, setActiveChord, onDeleteChord, 
 
 // ActionButtons Component
 // ActionButtons Component
-const ActionButtons = ({ onSave, onPlay, selectedChords, progressionName, nameParam }) => {
+interface ActionButtonsProps {
+  onSave: () => void;
+  onPlay: () => void | Promise<void>;
+  selectedChords: (string | null)[];
+  progressionName: string;
+  nameParam: string | null;
+}
+
+const ActionButtons = ({ onSave, onPlay, selectedChords, progressionName, nameParam }: ActionButtonsProps) => {
   return (
     <div className="flex gap-4 mb-8">
       <button 
@@ -240,7 +274,9 @@ const ActionButtons = ({ onSave, onPlay, selectedChords, progressionName, namePa
 }
 
 // Tabs Component
-const Tabs = ({ activeTab, setActiveTab }) => {
+type TabKey = 'recommendations' | 'selector';
+interface TabsProps { activeTab: TabKey; setActiveTab: (t: TabKey) => void }
+const Tabs = ({ activeTab, setActiveTab }: TabsProps) => {
   return (
     <div className="flex mb-0 ml-[50px]">
       <button
@@ -260,8 +296,14 @@ const Tabs = ({ activeTab, setActiveTab }) => {
 }
 
 // RecommendationsView Component
-const RecommendationsView = ({ onSelectChord, recommendations, notation }) => {
-  const getCardStyle = (index) => {
+interface RecommendationItem { chord: string; text: string; rating: number }
+interface RecommendationsViewProps {
+  onSelectChord: (chord: string) => void;
+  recommendations: RecommendationItem[];
+  notation: Notation;
+}
+const RecommendationsView = ({ onSelectChord, recommendations, notation }: RecommendationsViewProps) => {
+  const getCardStyle = (index: number) => {
     const opacities = [0.7, 0.4, 0.2];
     const opacity = opacities[index];
     return {
@@ -307,7 +349,7 @@ const RecommendationsView = ({ onSelectChord, recommendations, notation }) => {
 }
 
 // Utilidad para obtener los acordes de la escala
-function getScaleChords(tonality, mode, notation) {
+function getScaleChords(tonality: string, mode: Mode, notation: Notation): string[] {
   const notas = notation === 'latino' ? notasLatino : notasAmericano;
   const mayor = [0, 2, 4, 5, 7, 9, 11];
   const menor = [0, 2, 3, 5, 7, 8, 10];
@@ -329,9 +371,15 @@ function getScaleChords(tonality, mode, notation) {
 }
 
 // ChordSelectorView Component
-const ChordSelectorView = ({ onSelectChord, notation, tonality, mode }) => {
+interface ChordSelectorViewProps {
+  onSelectChord: (chord: string) => void;
+  notation: Notation;
+  tonality: string;
+  mode: Mode;
+}
+const ChordSelectorView = ({ onSelectChord, notation, tonality, mode }: ChordSelectorViewProps) => {
   const scaleChords = getScaleChords(tonality, mode, notation);
-  const [selectedScaleChord, setSelectedScaleChord] = useState(null);
+  const [selectedScaleChord, setSelectedScaleChord] = useState<string | null>(null);
   return (
     <div className="border border-gray-200 rounded-lg p-6">
       <h2 className="text-xl font-medium mb-6">Acordes de la escala</h2>
@@ -355,7 +403,7 @@ const ChordSelectorView = ({ onSelectChord, notation, tonality, mode }) => {
 }
 
 // Main App Component
-export function ChordProgressionApp() {
+function RecommendationsInner() {
   
   const [enableExplanations, setEnableExplanations] = useState(false);
   const [playingChordIndex, setPlayingChordIndex] = useState<number | null>(null);
@@ -373,13 +421,13 @@ export function ChordProgressionApp() {
     }
   }
   
-  const [activeTab, setActiveTab] = useState('recommendations');
+  const [activeTab, setActiveTab] = useState<TabKey>('recommendations');
   const [selectedChords, setSelectedChords] = useState<(string|null)[]>(initialChords);
   const [activeChord, setActiveChord] = useState(initialChords.length - 1);
   const notationParam = searchParams.get('notation');
   const keyParam = searchParams.get('key');
   const modeParam = searchParams.get('mode');
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
 
   useEffect(() => {
     if (activeTab === 'recommendations') {
@@ -402,9 +450,9 @@ export function ChordProgressionApp() {
     if (modeParam.toLowerCase() === 'mayor') initialMode = 'Mayor';
   }
 
-  const [mode, setMode] = useState(initialMode);
+  const [mode, setMode] = useState<Mode>(initialMode as Mode);
   const [tonality, setTonality] = useState(initialTonality);
-  const [loadingExplanations, setLoadingExplanations] = useState(false);
+  const [loadingExplanations, setLoadingExplanations] = useState<boolean>(false);
 
   const handleSelectChord = (index: number) => {
     setActiveChord(index);
@@ -417,7 +465,7 @@ export function ChordProgressionApp() {
 
   const acordesContexto = (acordes ?? selectedChords)
     .slice(0, activeIndex)
-    .filter(Boolean)
+    .filter(isString)
     .map(toAmericano);
 
 
@@ -451,9 +499,9 @@ export function ChordProgressionApp() {
 };
 
   const { notation, toggleNotation } = useNotation();
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [progressionName, setProgressionName] = useState("");
-  const [error, setError] = useState(null);
+  const [showSaveModal, setShowSaveModal] = useState<boolean>(false);
+  const [progressionName, setProgressionName] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -485,9 +533,10 @@ export function ChordProgressionApp() {
 
   const handleModalOk = async () => {
     try {
+      const progressionNameFinal: string = (progressionName?.trim() || nameParam || 'progresion');
       const progression = {
-        name: progressionName || nameParam,
-        chords: selectedChords.filter(Boolean).map(toAmericano),
+        name: progressionNameFinal,
+        chords: selectedChords.filter(isString).map(toAmericano),
       };
 
       await saveProgressionService(progression.name, progression.chords, mode, toAmericano(tonality), editParam ? parseInt(editParam) : undefined);
@@ -559,7 +608,7 @@ export function ChordProgressionApp() {
         onSave={handleSaveProgression}
         selectedChords={selectedChords}
         onPlay={async () => {
-          const chordsToPlay = selectedChords.filter(Boolean) as string[];
+          const chordsToPlay = selectedChords.filter(isString);
 
           for (let i = 0; i < chordsToPlay.length; i++) {
             const chord = chordsToPlay[i];
@@ -643,7 +692,7 @@ export function ChordProgressionApp() {
               <button
                 className="px-6 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 transition"
                 onClick={() => {
-                  const chordsParam = encodeURIComponent(selectedChords.filter(Boolean).join(','));
+                  const chordsParam = encodeURIComponent(selectedChords.filter(isString).join(','));
                   const key = toAmericano(tonality);
                   const currentUrl = `/recommendations?progression=${chordsParam}&key=${key}&mode=${mode}`;
                   router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`);
@@ -661,4 +710,10 @@ export function ChordProgressionApp() {
 
 
 
-export default ChordProgressionApp;
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <RecommendationsInner />
+    </Suspense>
+  );
+}

@@ -1,7 +1,12 @@
 "use client";
 import React from "react";
 
-const ExplanationToggle = ({ showExplanations, toggleExplanations }) => {
+interface ExplanationToggleProps {
+  showExplanations: boolean;
+  toggleExplanations: () => void;
+}
+
+const ExplanationToggle: React.FC<ExplanationToggleProps> = ({ showExplanations, toggleExplanations }) => {
   return (
     <div className="flex items-center gap-4">
       <span className="text-lg font-medium text-gray-700">
