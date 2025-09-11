@@ -1,11 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-POSTGRESQL_DATABASE_URL = "postgresql://postgres:1234@localhost:5432/simplechord"
-#POSTGRESQL_DATABASE_URL = "postgresql://postgres:siemensdb5801@localhost:5432/simplechord"
+DEFAULT_DATABASE_URL = "postgresql://postgres:1234@localhost:5432/simplechord"
+# Prefer env var for deploys (e.g., Vercel + external DB like Neon/Supabase)
+DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)
 
-engine = create_engine(POSTGRESQL_DATABASE_URL)
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

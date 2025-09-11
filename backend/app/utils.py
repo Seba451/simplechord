@@ -4,9 +4,10 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional
 from . import schemas
+import os
 
 # Configuración
-SECRET_KEY = "alsdoqw412j32i35492gjasdk"
+SECRET_KEY = os.getenv("SECRET KEY", "dev_secret_key")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

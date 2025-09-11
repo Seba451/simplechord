@@ -15,11 +15,14 @@
 
 # next.js
 /.next/
+dist/
 /out/
 
 */venv/
 venv/
 env/
+__pycache__/
+*.pyc
 .venv/
 ENV/
 backend/venv/
@@ -40,6 +43,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.DS_Store
 
 # vercel
 .vercel

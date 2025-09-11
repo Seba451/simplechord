@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { convertirGradosAAcordes } from './toChordConversion';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 export async function getChordRecommendations(acordes: string[], tonalidad: string, grados: string[], mode: String, enableExplanations: boolean, topK: number = 3) {
   try {
     console.log('modo: ', mode);
@@ -11,7 +13,7 @@ export async function getChordRecommendations(acordes: string[], tonalidad: stri
     console.log('acordes: ', acordes);
     const modePath = mode === 'Menor' ? 'minor' : 'major';
     
-    const response = await axios.post(`http://localhost:8000/predictions/${modePath}`, {
+    const response = await axios.post(`${API_BASE_URL}/predictions/${modePath}`, {
       input_sequence,
       top_k: topK
     });
@@ -39,7 +41,7 @@ export async function getChordRecommendations(acordes: string[], tonalidad: stri
       explanations = await Promise.all(
         recommendationsChords.map(async (chord) => {
           try {
-            const expResponse = await axios.post(`http://localhost:8000/predictions/explain`, {
+            const expResponse = await axios.post(`${API_BASE_URL}/predictions/explain`, {
               chord,
               progression: acordes, // 👈 ojo, acá mandá progression, no "acordes"
               tonalidad,

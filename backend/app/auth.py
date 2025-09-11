@@ -13,6 +13,7 @@ from .schemas import Token
 from datetime import timedelta
 from jose import JWTError, jwt
 from fastapi.responses import JSONResponse
+import os
 
 router = APIRouter(
     prefix="/auth",
@@ -74,12 +75,16 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     
     # Crear respuesta con cookie
     response = JSONResponse(content={"message": "Login successful"})
+    # Cookie settings configurable via env for local vs production
+    cookie_secure = os.getenv("COOKIE_SECURE", "true").lower() == "true"
+    cookie_samesite = os.getenv("COOKIE_SAMESITE", "none").lower()
+
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
         httponly=True,
-        secure=True,  # Para HTTPS
-        samesite="lax",
+        secure=cookie_secure,  # HTTPS in prod; can disable locally
+        samesite=cookie_samesite,  # 'none' for cross-site with separate frontend
         max_age=3600,  # 1 hora
         path="/"
     )

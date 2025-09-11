@@ -75,13 +75,13 @@ export default function Home() {
     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
       <Link
         href="/studio"
-        className="bg-[#32957E] hover:bg-[#32957B] text-white px-16 py-4 rounded-xl shadow-lg text-lg font-medium transition-all hover:shadow-xl active:translate-y-0.5 w-full sm:w-auto"
+        className="bg-green-500 hover:bg-green-600 text-white px-16 py-4 rounded-xl shadow-lg text-lg font-medium transition-all hover:shadow-xl active:translate-y-0.5 w-full sm:w-auto"
       >
         COMENZAR
       </Link>
       <Link
         href="/progressions"
-        className="bg-white hover:bg-gray-50 text-black px-16 py-4 rounded-xl shadow-lg text-lg font-medium border border-gray-200 transition-all hover:shadow-xl active:translate-y-0.5 w-full sm:w-auto"
+        className="bg-white hover:bg-gray-300 text-black px-16 py-4 rounded-xl shadow-lg text-lg font-medium border border-gray-200 transition-all hover:shadow-xl active:translate-y-0.5 w-full sm:w-auto"
       >
         MIS PROGRESIONES
       </Link>

@@ -86,7 +86,7 @@ export default function Studio() {
 
         {/* MODO */}
         {showModo && (
-          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0s', animationFillMode: 'both' }}>
             <div className="rounded-2xl border-2 border-gray-200 bg-white/90 px-8 py-6 mb-8 shadow-xl">
               <h2 className="text-3xl font-bold mb-4">
                 Seleccioná un <span className="text-green-600">Modo</span>
@@ -112,7 +112,7 @@ export default function Studio() {
 
         {/* TONALIDAD */}
         {showTonalidad && (
-          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0s', animationFillMode: 'both' }}>
             <div className="rounded-2xl border-2 border-gray-200 bg-white/90 px-8 py-6 mb-8 shadow-xl">
               <h2 className="text-3xl font-bold mb-4">
                 Seleccioná una <span className="text-green-600">Tonalidad</span>
@@ -138,7 +138,7 @@ export default function Studio() {
 
         {/* ACORDES */}
         {showAcordes && (
-          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
+          <div className="w-full max-w-3xl animate-fadein-slideup" style={{ animationDelay: '0s', animationFillMode: 'both' }}>
             <div className="rounded-2xl border-2 border-gray-200 bg-white/90 px-8 py-6 mb-8 shadow-xl">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-3xl font-bold">
@@ -174,7 +174,7 @@ export default function Studio() {
 
         {/* ACORDES SELECCIONADOS */}
         {showAcordesSeleccionados && (
-          <div className="w-full max-w-3xl mb-8 animate-fadein-slideup" style={{ animationDelay: '0.8s', animationFillMode: 'both' }}>
+          <div className="w-full max-w-3xl mb-8 animate-fadein-slideup" style={{ animationDelay: '0s', animationFillMode: 'both' }}>
             <div className="rounded-2xl border-2 border-gray-200 bg-white/90 px-8 py-4 flex gap-4 shadow-xl">
               {acordes.map((a) => (
                 <div key={a} className="bg-green-500 text-white rounded-md px-8 py-2 text-xl font-medium shadow">
@@ -187,7 +187,7 @@ export default function Studio() {
 
         {/* BOTÓN RECOMENDAR */}
         {showRecomendar && (
-          <div className="w-full max-w-3xl flex justify-end animate-fadein-slideup" style={{ animationDelay: '1.0s', animationFillMode: 'both' }}>
+          <div className="w-full max-w-3xl flex justify-end animate-fadein-slideup" style={{ animationDelay: '0s', animationFillMode: 'both' }}>
             <button
               className="bg-green-500 hover:bg-green-600 text-white px-12 py-4 rounded-xl shadow-xl text-xl font-semibold transition active:scale-95 duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={acordes.length === 0}
