@@ -1,18 +1,23 @@
 from fastapi import FastAPI
 from . import models
 from .database import engine
+from . import database as dbmodule
 from .auth import router as auth_router
 from .progressions import router as progression_router
 from fastapi.middleware.cors import CORSMiddleware
 from .users import router as users_router
 from .predictions import router as predictions_router
 import os
+from sqlalchemy import text
 
 
-app = FastAPI()
+# Disable automatic slash redirects to avoid proxy double-prefix issues
+# (e.g., 307 to '/.../' behind a root path '/api' can become '/api/api/...')
+app = FastAPI(redirect_slashes=False)
 
 # CORS: allow explicit origins (not "*") when using credentials
 origins_env = os.getenv("CORS_ALLOW_ORIGINS") or os.getenv("FRONTEND_URL") or os.getenv("FRONT_ORIGIN")
+origin_regex = os.getenv("CORS_ALLOW_ORIGIN_REGEX")
 if origins_env:
     allow_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
 else:
@@ -21,6 +26,7 @@ else:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
+    allow_origin_regex=origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,8 +36,10 @@ app.add_middleware(
 def on_startup():
     try:
         models.Base.metadata.create_all(bind=engine)
-        print("✅ Tablas verificadas/creadas")
+        print("✅ Tablas verificadas/creadas, latest build")
         print(f"✅ CORS allow_origins: {allow_origins}")
+        if origin_regex:
+            print(f"✅ CORS allow_origin_regex: {origin_regex}")
     except Exception as e:
         print(f"⚠️  Error creando tablas: {e}")
 
@@ -43,3 +51,14 @@ app.include_router(predictions_router)
 @app.get("/health")
 def health():
     return {"ok": True}
+
+@app.get("/health/db")
+def health_db():
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"db": "ok"}
+    except Exception as e:
+        # Log and also return a minimal hint for faster diagnosis
+        print(f"DB health check error: {e}")
+        return {"db": "error", "detail": str(e)}
