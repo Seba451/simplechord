@@ -15,12 +15,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.simple-chord.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "SimpleChord",
   description: "Componé progresiones de acordes y obtené recomendaciones.",
   icons: {
-    icon: "/simplechordlogo1.png", // usa tu logo del directorio public
-    shortcut: "/simplechordlogo1.png",
+    icon: "/favicon.ico", // favicon por defecto
+    shortcut: "/favicon.ico",
     apple: "/simplechordlogo1.png",
   },
   applicationName: "SimpleChord",
@@ -45,6 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      
       <body className="bg-gradient-to-br from-green-50 via-white to-green-100 min-h-screen">
         <NotationProvider>
             
