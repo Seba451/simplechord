@@ -577,7 +577,7 @@ function RecommendationsInner() {
 
   return (
     <div className="flex w-full min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
-      <Sidebar active="Estudio" />
+      <Sidebar active="Componer" />
       <div className="absolute top-6 right-6 z-10 flex items-center gap-4">
     <NotationToggle />
     <ExplanationToggle 

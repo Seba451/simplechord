@@ -93,9 +93,9 @@ def ensure_assets_loaded():
                 tokenizer_minor = pickle.load(f)
 
             _assets_loaded = True
-            print(f"✅ Modelos y tokenizers cargados en {time.time()-t0:.2f}s")
+            print(f"Modelos y tokenizers cargados en {time.time()-t0:.2f}s")
         except Exception as e:
-            print(f"❌ Error cargando modelos/tokenizers: {e}")
+            print(f"Error cargando modelos/tokenizers: {e}")
             raise HTTPException(status_code=500, detail=f"Error cargando modelos: {e}")
 
 # Lazy OpenAI client to avoid crashing at import time
@@ -175,10 +175,10 @@ async def predict_chord_major(request: schemas.PredictionRequest):
 
         #Acordes ingresados por el usuario
         input_chords = request.input_sequence.split()
-        print("📝 Input chords:", input_chords)
+        print("Input chords:", input_chords)
 
         top_k_probs = [prediction[0][i] for i in top_k_indices]
-        print("🔮 Predicted chords with probabilities:")
+        print("Predicted chords with probabilities:")
         for chord, prob in zip(top_k_chords, top_k_probs):
             print(f"  {chord}: {prob:.4f}")
         return top_k_chords
@@ -205,7 +205,7 @@ async def predict_chord_minor(request: schemas.PredictionRequest):
         top_k_indices = np.argsort(prediction[0])[-request.top_k:][::-1]
         top_k_chords = [tokenizer_minor.index_word.get(i, f"<UNK:{i}>") for i in top_k_indices]
 
-        print("🔮 Predicted chords:", top_k_chords)
+        print("Predicted chords:", top_k_chords)
         return top_k_chords
     except Exception as e:
         print("❌ Error:", str(e))

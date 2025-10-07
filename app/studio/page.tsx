@@ -76,7 +76,7 @@ export default function Studio() {
 
   return (
     <div className="flex w-full min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 relative">
-      <Sidebar active="Estudio" />
+      <Sidebar active="Componer" />
 
       <main className="flex-1 flex flex-col items-center py-10 px-4 overflow-x-hidden relative">
         {/* Toggle de notación arriba a la derecha */}

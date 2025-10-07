@@ -1,17 +1,17 @@
 "use client";
 
-import { Music, Piano, UserIcon, LogOutIcon, LockIcon, LogInIcon } from 'lucide-react';
+import { Sparkle, Piano, UserIcon, LogOutIcon, LockIcon, LogInIcon } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { getUserService, logoutService } from '../app/services/auth';
 
 const sidebarItems = [
-  { icon: <Music />, label: 'Estudio', href: '/studio' },
+  { icon: <Sparkle />, label: 'Componer', href: '/studio' },
   { icon: <Piano />, label: 'Mis Progresiones', href: '/progressions' },
 ];
 
-export default function Sidebar({ active = 'Estudio' }: { active?: string }) {
+export default function Sidebar({ active = 'Componer' }: { active?: string }) {
   const router = useRouter();
   const [user, setUser] = useState<{ usuario: string; email: string } | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
