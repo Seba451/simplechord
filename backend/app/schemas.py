@@ -1,4 +1,4 @@
-# backend/app/schemas.py
+
 from .database import Base
 from pydantic import BaseModel
 from typing import List, Optional

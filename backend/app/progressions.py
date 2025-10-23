@@ -8,10 +8,9 @@ from typing import List
 router = APIRouter(
     prefix="/progresiones",
     tags=["progresiones"],
-    redirect_slashes=False,  # evita 307 que pueden duplicar prefijos detrás de proxies
+    redirect_slashes=False,  
 )
 
-# Accept both with and without trailing slash to avoid 404s behind proxies/clients
 @router.post("/", response_model=schemas.Progresion)
 @router.post("", response_model=schemas.Progresion)
 def create_progresion(

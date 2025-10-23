@@ -122,7 +122,7 @@ export default function ProgressionsPage() {
   const splitTonality = (tonalidad: string) => {
   if (tonalidad.endsWith('m')) {
     return {
-      key: tonalidad.slice(0, -1), // Remove the 'm' suffix
+      key: tonalidad.slice(0, -1), 
       mode: 'menor'
     };
   }

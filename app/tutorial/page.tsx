@@ -1,12 +1,11 @@
-// app/theory/page.tsx
 "use client";
 
 import React, { useState } from "react";
 import { ChevronDown as ChevronDownIcon } from "lucide-react";
 import Sidebar from "../../components/Sidebar";
 import { AnimatePresence, motion } from "framer-motion";
-import NotationToggle from "@/components/NotationToggle"; // ⬅️ ajustá el path si difiere
-import { useNotation } from "../context/notation";     // ⬅️ mismo contexto que usa el toggle
+import NotationToggle from "@/components/NotationToggle"; 
+import { useNotation } from "../context/notation";     
 
 type Item = { id: string; title: string; body: string };
 
@@ -16,7 +15,6 @@ const AME = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 function latToAm(root: string) { const i = LAT.indexOf(root); return i >= 0 ? AME[i] : root; }
 function amToLat(root: string) { const i = AME.indexOf(root); return i >= 0 ? LAT[i] : root; }
 
-// Convierte notas/acordes en el texto (Do/Do#/Dom ↔ C/C#/Cm)
 function convertTextNotation(text: string, notation: "latino" | "americano") {
   if (notation === "americano") {
     return text.replace(/\b(Do|Re|Mi|Fa|Sol|La|Si)(#)?(m)?\b/g, (_m, base, sharp, minor) => {
@@ -74,7 +72,7 @@ const ITEMS: Item[] = [
 
 function TheoryCard({ title, body }: { title: string; body: string }) {
   const [open, setOpen] = useState(false);
-  const { notation } = useNotation(); // ⬅️ lee el estado actual del toggle
+  const { notation } = useNotation(); 
   const panelId = title.replace(/\s+/g, "-").toLowerCase();
   const bodyConverted = convertTextNotation(body, notation);
 

@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { saveProgressionService } from '../services/progressions';
-import { useNotation } from '../context/notation'; // Ajustá el path si cambia
+import { useNotation } from '../context/notation'; 
 import NotationToggle from '@/components/NotationToggle';
 import { convertirAcordesAGrados } from '../services/toGradeConversion';
 import { getChordRecommendations } from '../services/predictions';
@@ -30,7 +30,7 @@ import { getUserService } from '../services/auth';
 import ExplanationToggle from '@/components/ExplanationToggle';
 
 
-// Type guard to filter non-null strings
+
 const isString = (x: unknown): x is string => typeof x === 'string' && x.length > 0;
 
 const notasAmericano = [
@@ -195,9 +195,9 @@ const ChordProgression = ({ chords, activeChord, setActiveChord, onDeleteChord, 
                   onSelectChord(index);
                   if (chord) {
                     const notes = chordToNotes(chord);
-                    playChord(notes); // 🎹 suena al clickear en la progresión
+                    playChord(notes); 
                   }
-                }} // Aquí llamamos a onSelectChord correctamente
+                }} 
               >
                 {notation === 'latino' ? toLatino(chord) : toAmericano(chord)}
               </button>
@@ -218,7 +218,7 @@ const ChordProgression = ({ chords, activeChord, setActiveChord, onDeleteChord, 
           onClick={() => {
             const newIndex = chords.length;
             onDeleteChord([...chords, null], newIndex);
-            fetchRecommendations(newIndex); // ← Esto es lo que fuerza la actualización
+            fetchRecommendations(newIndex); 
           }}
         >
           <PlusIcon className="w-8 h-8" />
@@ -494,7 +494,7 @@ function RecommendationsInner() {
     console.error("Error obteniendo recomendaciones:", error);
     setRecommendations([]);
   }finally {
-    setLoadingExplanations(false); // 🔹 ocultar spinner
+    setLoadingExplanations(false); 
   }
 };
 
@@ -612,7 +612,7 @@ function RecommendationsInner() {
 
           for (let i = 0; i < chordsToPlay.length; i++) {
             const chord = chordsToPlay[i];
-            setPlayingChordIndex(i); // ⚡ Acorde activo
+            setPlayingChordIndex(i); // Acorde activo
             const notes = chordToNotes(chord);
             playChord(notes); // reproducir acorde
             await new Promise(resolve => setTimeout(resolve, 1250)); // espera 2s antes del siguiente acorde

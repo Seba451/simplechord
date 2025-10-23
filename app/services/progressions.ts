@@ -21,7 +21,6 @@ export const saveProgressionService = async (
     const tonalidadFinal = mode === 'Menor' ? `${tonality}m` : tonality;
     const acordes = chords.filter(isString);
     if(id){
-        // Update existing progression
       const response = await axios.put(
       `${API_BASE_URL}/progresiones/${id}`,  
       { nombre: progressionName, acordes, tonalidad: tonalidadFinal } as ProgressionPayload,

@@ -19,14 +19,15 @@ router = APIRouter(
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Lazy assets: models and tokenizers
+# Utilizamos lazy loading para los modelos y tokenizers, para que no 
+# cuelguen la app si no llegan a cargarse bien
 _assets_lock = Lock()
 _assets_loaded = False
 model_major = None
 model_minor = None
 tokenizer_major = None
 tokenizer_minor = None
-# Placeholders for lazy-imported keras utils
+
 pad_sequences = None
 load_model = None
 max_seq_len = 4
@@ -63,12 +64,11 @@ def ensure_assets_loaded():
             return
         try:
             t0 = time.time()
-            # Lazy import heavy deps
+            
             _load_model, _pad_sequences = _resolve_keras_loaders()
             load_model = _load_model
             pad_sequences = _pad_sequences
 
-            # Resolve model/tokenizer paths (support multiple filenames)
             model_major_path = _first_existing([
                 'lstm_model.keras', 'modelo_mayor.h5', 'lstm_model.h5', 'lstm_model_major.keras'
             ])
@@ -87,7 +87,6 @@ def ensure_assets_loaded():
             model_minor = load_model(model_minor_path)
 
             with open(tokenizer_mayor_path, 'rb') as f:
-                # nosec - loading trusted pickle artifacts packaged with the app
                 tokenizer_major = pickle.load(f)
             with open(tokenizer_menor_path, 'rb') as f:
                 tokenizer_minor = pickle.load(f)
@@ -98,7 +97,6 @@ def ensure_assets_loaded():
             print(f"Error cargando modelos/tokenizers: {e}")
             raise HTTPException(status_code=500, detail=f"Error cargando modelos: {e}")
 
-# Lazy OpenAI client to avoid crashing at import time
 def get_openai_client() -> OpenAI:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
@@ -151,7 +149,7 @@ async def explain_chords(request: ExplainRequest):
             return ExplainResponse(explanation=explanation)
     
     except Exception as e:
-        print("❌ Error en /explain:", str(e))
+        print("Error en /explain:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/major", response_model=List[str])
@@ -183,7 +181,7 @@ async def predict_chord_major(request: schemas.PredictionRequest):
             print(f"  {chord}: {prob:.4f}")
         return top_k_chords
     except Exception as e:
-        print("❌ Error:", str(e))
+        print("Error:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
     
 @router.post("/minor", response_model=List[str])
@@ -208,5 +206,5 @@ async def predict_chord_minor(request: schemas.PredictionRequest):
         print("Predicted chords:", top_k_chords)
         return top_k_chords
     except Exception as e:
-        print("❌ Error:", str(e))
+        print("Error:", str(e))
         raise HTTPException(status_code=500, detail=str(e))

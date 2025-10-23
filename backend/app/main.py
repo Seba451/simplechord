@@ -11,11 +11,9 @@ import os
 from sqlalchemy import text
 
 
-# Disable automatic slash redirects to avoid proxy double-prefix issues
-# (e.g., 307 to '/.../' behind a root path '/api' can become '/api/api/...')
 app = FastAPI(redirect_slashes=False)
 
-# CORS: allow explicit origins (not "*") when using credentials
+# Variables de entorno para CORS
 origins_env = os.getenv("CORS_ALLOW_ORIGINS") or os.getenv("FRONTEND_URL") or os.getenv("FRONT_ORIGIN")
 origin_regex = os.getenv("CORS_ALLOW_ORIGIN_REGEX")
 if origins_env:
@@ -36,12 +34,12 @@ app.add_middleware(
 def on_startup():
     try:
         models.Base.metadata.create_all(bind=engine)
-        print("✅ Tablas verificadas/creadas, latest build")
-        print(f"✅ CORS allow_origins: {allow_origins}")
+        print("Tablas verificadas/creadas, latest build")
+        print(f"CORS allow_origins: {allow_origins}")
         if origin_regex:
-            print(f"✅ CORS allow_origin_regex: {origin_regex}")
+            print(f"CORS allow_origin_regex: {origin_regex}")
     except Exception as e:
-        print(f"⚠️  Error creando tablas: {e}")
+        print(f"Error creando tablas: {e}")
 
 app.include_router(auth_router)
 app.include_router(progression_router)
@@ -59,6 +57,6 @@ def health_db():
             conn.execute(text("SELECT 1"))
         return {"db": "ok"}
     except Exception as e:
-        # Log and also return a minimal hint for faster diagnosis
+        
         print(f"DB health check error: {e}")
         return {"db": "error", "detail": str(e)}

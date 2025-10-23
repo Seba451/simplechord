@@ -12,20 +12,16 @@ export const exportProgressionToMidi = (chords: string[], filename: string) => {
 
   chords.forEach(chord => {
     if (!chord) return;
-    const notes = chordToNotes(chord); // ["C4", "E4", "G4"]
+    const notes = chordToNotes(chord); 
 
-    // Todas las notas ON al mismo tiempo
     notes.forEach((note, idx) => {
       track.addNoteOn(0, note, idx === 0 ? 0 : 0);
     });
 
-    // Todas las notas OFF al mismo tiempo, después de "duration"
     notes.forEach((note, idx) => {
       track.addNoteOff(0, note, idx === 0 ? duration : 0);
     });
 
-    // En lugar de agregar un C4, simplemente agregamos un "silencio"
-    // Avanzamos el tiempo usando una nota OFF dummy
     track.addNoteOff(0, notes[0], pause);
   });
 

@@ -1,5 +1,5 @@
 'use client';
-// utils/audio.ts (SSR-safe, lazy Tone import)
+
 import { chordToNotes } from "./chords";
 
 type ToneNS = typeof import('tone');
@@ -19,9 +19,9 @@ async function getTone(): Promise<ToneNS> {
 
 async function ensurePiano() {
   const Tone = await getTone();
-  // If sampler already created, ensure it's fully loaded before returning
+  
   if (piano) {
-    // Tone.Sampler exposes `loaded` as a Promise once constructed
+    
     if ((piano as any).loaded && typeof (piano as any).loaded.then === 'function') {
       try { await (piano as any).loaded; } catch {}
       return piano;
@@ -68,14 +68,14 @@ async function ensurePiano() {
     release: 1,
     baseUrl: "https://tonejs.github.io/audio/salamander/",
   }).toDestination();
-  // Ensure all buffers are loaded before first trigger
+  
   try {
-    // Tone v14+: Sampler exposes a `loaded` Promise; fallback to Tone.loaded()
+    
     const loadedPromise: Promise<any> = (piano && piano.loaded) ? piano.loaded : Tone.loaded();
     pianoReady = loadedPromise.then(() => piano);
     await pianoReady;
   } catch (e) {
-    // If loading fails, reset so a later attempt can retry
+    
     piano = null;
     pianoReady = null;
     throw e;
@@ -90,20 +90,20 @@ export async function playChord(notes: string[]) {
   p.triggerAttackRelease(notes, "2n");
 }
 
-// Optional helper to warm up audio and preload the sampler
+
 export async function prepareAudio() {
   const Tone = await getTone();
   await Tone.start();
   await ensurePiano();
 }
 
-// Pre-carga pasiva de buffers sin tocar el contexto de audio
-// Llama esto en un useEffect al montar la vista para que el primer acorde no espere descargas
+
 export async function preloadPianoBuffers() {
-  // No llamamos Tone.start(); sólo aseguramos que el Sampler se construya y descargue
+  
   await ensurePiano();
   const Tone = await getTone();
-  // Para versiones antiguas de ToneJS, forzar espera global
+  
+  
   if (typeof (Tone as any).loaded === 'function') {
     await (Tone as any).loaded();
   }

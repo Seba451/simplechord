@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 export async function getChordRecommendations(acordes: string[], tonalidad: string, grados: string[], mode: String, enableExplanations: boolean, topK: number = 3) {
   try {
     console.log('modo: ', mode);
-    const input_sequence = grados.join(" "); // ["I", "IV", "V"] => "I IV V"
+    const input_sequence = grados.join(" "); // 
     console.log('secuencia de entrada: ', input_sequence);
 
     console.log('tonalidad: ', tonalidad);
@@ -43,7 +43,7 @@ export async function getChordRecommendations(acordes: string[], tonalidad: stri
           try {
             const expResponse = await axios.post(`${API_BASE_URL}/predictions/explain`, {
               chord,
-              progression: acordes, // 👈 ojo, acá mandá progression, no "acordes"
+              progression: acordes, 
               tonalidad,
             });
             return { chord, explanation: expResponse.data.explanation };

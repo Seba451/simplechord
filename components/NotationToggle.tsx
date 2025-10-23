@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useNotation } from "../app/context/notation"; // Ajustá el path según tu estructura
+import { useNotation } from "../app/context/notation"; 
 
 const NotationToggle = () => {
   const { notation, toggleNotation } = useNotation();
