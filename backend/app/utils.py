@@ -7,7 +7,9 @@ from . import schemas
 import os
 
 # Configuración
-SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY variable de entorno no definida.")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
