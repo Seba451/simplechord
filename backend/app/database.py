@@ -6,8 +6,9 @@ import re
 import os
 
 # Variables de entorno para la configuración de la base de datos
-DEFAULT_DATABASE_URL = "postgresql://postgres:1234@localhost:5432/simplechord"
-DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL variable de entorno no está configurada.")
 
 is_supabase_pooler = bool(re.search(r"pooler\.supabase\.com", DATABASE_URL or ""))
 
